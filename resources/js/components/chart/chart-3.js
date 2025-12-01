@@ -1,24 +1,27 @@
-
 export const initChartThree = () => {
-    const chartElement = document.querySelector('#chartThree');
+    const chartElement = document.querySelector("#chartThree");
 
     if (chartElement) {
         const chartThreeOptions = {
-            series: [{
-                name: "Sales",
-                data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
-            },
-            {
-                name: "Revenue",
-                data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
-            },
+            series: [
+                {
+                    name: "Sales",
+                    data: [
+                        180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240,
+                        235,
+                    ],
+                },
+                {
+                    name: "Revenue",
+                    data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+                },
             ],
             legend: {
                 show: false,
                 position: "top",
                 horizontalAlign: "left",
             },
-            colors: ["#465FFF", "#9CB9FF"],
+            colors: ["#7ccf00", "#bbf451"],
             chart: {
                 fontFamily: "Outfit, sans-serif",
                 height: 310,
@@ -102,6 +105,6 @@ export const initChartThree = () => {
         chart.render();
         return chart;
     }
-}
+};
 
 export default initChartThree;

@@ -1,11 +1,10 @@
-
 export const initChartTwo = () => {
-    const chartElement = document.querySelector('#chartTwo');
+    const chartElement = document.querySelector("#chartTwo");
 
     if (chartElement) {
         const chartTwoOptions = {
             series: [75.55],
-            colors: ["#465FFF"],
+            colors: ["#12b76a"],
             chart: {
                 fontFamily: "Outfit, sans-serif",
                 type: "radialBar",
@@ -44,7 +43,7 @@ export const initChartTwo = () => {
             },
             fill: {
                 type: "solid",
-                colors: ["#465FFF"],
+                colors: ["#7ccf00"],
             },
             stroke: {
                 lineCap: "round",
@@ -56,6 +55,6 @@ export const initChartTwo = () => {
         chart.render();
         return chart;
     }
-}
+};
 
 export default initChartTwo;

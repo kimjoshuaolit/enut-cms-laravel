@@ -1,15 +1,17 @@
-
-
 export const initChartOne = () => {
-    const chartElement = document.querySelector('#chartOne');
+    const chartElement = document.querySelector("#chartOne");
     if (!chartElement) return;
 
     const chartOneOptions = {
-        series: [{
-            name: "Sales",
-            data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
-        },],
-        colors: ["#465fff"],
+        series: [
+            {
+                name: "Sales",
+                data: [
+                    168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112,
+                ],
+            },
+        ],
+        colors: ["#12b76a"],
         chart: {
             fontFamily: "Outfit, sans-serif",
             type: "bar",
