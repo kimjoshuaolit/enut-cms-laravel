@@ -50,8 +50,8 @@
 
             <!-- Logo (mobile only) -->
             <a href="/" class="xl:hidden">
-                <img class="dark:hidden" src="/images/logo/logo.svg" alt="Logo" />
-                <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
+                <img class="dark:hidden" src="/images/logo/enutrition-logo.svg" alt="Logo" />
+                <img class="hidden dark:block" src="/images/logo/enutrition-logo.svg" alt="Logo" />
             </a>
 
             <!-- Application Menu Toggle (mobile only) -->

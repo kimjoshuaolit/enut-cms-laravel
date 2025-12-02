@@ -5,7 +5,7 @@ use App\Http\Controllers\DashboardController;
 
 // dashboard pages
 Route::get('/', function () {
-    return view('pages.dashboard.ecommerce', ['title' => 'E-commerce Dashboard']);
+    return view('pages.dashboard.enut-cms', ['title' => 'eNutrition CMS Dashboard']);
 })->name('dashboard');
 
 // calender pages
@@ -82,25 +82,3 @@ Route::get('/image', function () {
 Route::get('/videos', function () {
     return view('pages.ui-elements.videos', ['title' => 'Videos']);
 })->name('videos');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
