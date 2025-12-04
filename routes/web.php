@@ -19,8 +19,8 @@ Route::get('/profile', function () {
 })->name('profile');
 
 // form pages
-Route::get('/form-elements', function () {
-    return view('pages.form.form-elements', ['title' => 'Form Elements']);
+Route::get('/factsandfigure', function () {
+    return view('pages.factsandfigures.facts-figures', ['title' => 'Facts and Figures']);
 })->name('form-elements');
 
 // tables pages

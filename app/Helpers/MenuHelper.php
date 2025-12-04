@@ -10,25 +10,26 @@ class MenuHelper
             [
                 'icon' => 'dashboard',
                 'name' => 'Dashboard',
-                'subItems' => [
-                    ['name' => 'Ecommerce', 'path' => '/'],
-                ],
+                'path' => '/',
+                // 'subItems' => [
+                //     ['name' => 'eNutrition', 'path' => '/'],
+                // ],
             ],
-            [
-                'icon' => 'calendar',
-                'name' => 'Calendar',
-                'path' => '/calendar',
-            ],
+            // [
+            //     'icon' => 'calendar',
+            //     'name' => 'Calendar',
+            //     'path' => '/calendar',
+            // ],
             [
                 'icon' => 'user-profile',
                 'name' => 'User Profile',
                 'path' => '/profile',
             ],
             [
-                'name' => 'Forms',
+                'name' => 'Resources',
                 'icon' => 'forms',
                 'subItems' => [
-                    ['name' => 'Form Elements', 'path' => '/form-elements', 'pro' => false],
+                    ['name' => 'Facts and Figures', 'path' => '/factsandfigure', 'pro' => false],
                 ],
             ],
             [

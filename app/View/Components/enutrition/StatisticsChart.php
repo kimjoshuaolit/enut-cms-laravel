@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\ecommerce;
+namespace App\View\Components\enutrition;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -21,6 +21,6 @@ class StatisticsChart extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.ecommerce.statistics-chart');
+        return view('components.enutrition.statistics-chart');
     }
 }

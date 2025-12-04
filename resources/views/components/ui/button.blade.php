@@ -1,5 +1,5 @@
 @props([
-    'size' => 'md',          
+    'size' => 'md',
     'variant' => 'primary',
     'startIcon' => null,
     'endIcon' => null,
@@ -20,8 +20,9 @@
 
     // Variant map
     $variantMap = [
-        'primary' => 'bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300',
-        'outline' => 'bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300',
+        'primary' => 'bg-lime-500 text-white shadow-theme-xs hover:bg-lime-600 disabled:bg-lime-300',
+        'outline' =>
+            'bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300',
     ];
     $variantClass = $variantMap[$variant] ?? $variantMap['primary'];
 
@@ -32,12 +33,11 @@
     $classes = trim("{$base} {$sizeClass} {$variantClass} {$className} {$disabledClass}");
 @endphp
 
-<button
-    {{ $attributes->merge(['class' => $classes, 'type' => $attributes->get('type', 'button')]) }}
-    @if($disabled) disabled @endif
->
+<button {{ $attributes->merge(['class' => $classes, 'type' => $attributes->get('type', 'button')]) }}
+    @if ($disabled) disabled @endif>
     {{-- start icon: priority — named slot 'startIcon' first, then startIcon prop if it's a HtmlString --}}
-    @if (isset($__env) && $slot->isEmpty() === false) @endif
+    @if (isset($__env) && $slot->isEmpty() === false)
+    @endif
 
     @hasSection('startIcon')
         <span class="flex items-center">

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\enutrition;
+namespace App\View\Components\PostItem;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class RecentOrders extends Component
+class PostItemAdd extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class RecentOrders extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.enutrition.recent-orders');
+        return view('components.post-item.post-item-add');
     }
 }
