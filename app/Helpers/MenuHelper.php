@@ -30,6 +30,9 @@ class MenuHelper
                 'icon' => 'forms',
                 'subItems' => [
                     ['name' => 'Facts and Figures', 'path' => '/factsandfigure', 'pro' => false],
+                    ['name' => 'Monograph', 'path' => '/monograph', 'pro' => false],
+                    ['name' => 'Presentation', 'path' => '/presentation', 'pro' => false],
+                    ['name' => 'Infographics', 'path' => '/infographics', 'pro' => false],
                 ],
             ],
             [

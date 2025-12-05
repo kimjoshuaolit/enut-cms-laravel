@@ -14,7 +14,7 @@ class Gallery extends Model
         'id',
         'title',
         'area',
-        'page',
+        'page_no',
         'cat_title',
         'cat_year',
         'file_path',

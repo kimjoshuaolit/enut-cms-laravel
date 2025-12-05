@@ -21,7 +21,23 @@ Route::get('/profile', function () {
 // form pages
 Route::get('/factsandfigure', function () {
     return view('pages.factsandfigures.facts-figures', ['title' => 'Facts and Figures']);
-})->name('form-elements');
+})->name('facts-figures');
+Route::get('/monograph', function () {
+    return view('pages.monograph.monograph', ['title' => 'Monograph']);
+})->name('monograph');
+Route::get('/presentation', function () {
+    return view('pages.presentation.presentation', ['title' => 'Presentation']);
+})->name('presentation');
+Route::get('/infographics', function () {
+    return view('pages.infographics.infographics', ['title' => 'Infographics']);
+})->name('infographics');
+
+
+
+
+
+
+
 
 // tables pages
 Route::get('/basic-tables', function () {
