@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PostItemController;
 
 // dashboard pages
 Route::get('/', function () {
@@ -32,7 +33,8 @@ Route::get('/infographics', function () {
     return view('pages.infographics.infographics', ['title' => 'Infographics']);
 })->name('infographics');
 
-
+//post item routes
+Route::post('/post-items', [PostItemController::class, 'store'])->name('post-items.store');
 
 
 

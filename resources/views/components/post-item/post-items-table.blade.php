@@ -83,8 +83,7 @@
 
                                 {{-- Year --}}
                                 <td class="px-5 py-4 sm:px-6">
-                                    <p class="text-theme-xs inline-block rounded-full px-2 py-0.5 font-medium"
-                                        :class="getStatusClass({{ $item->post_year }})">
+                                    <p class="text-theme-xs inline-block rounded-full px-2 py-0.5 font-medium">
                                         {{ $item->post_year }}
                                     </p>
                                 </td>
