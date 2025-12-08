@@ -103,6 +103,106 @@ class PostItemController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        try {
+            $postItem = PostItem::findOrFail($id);
+            return response()->json($postItem);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Item not found'], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'post_title' => 'required|string|min:3|max:255',
+            'post_description' => 'nullable|string|max:1000',
+            'post_survey' => 'nullable|string|max:255',
+            'post_year' => 'required|integer|min:1900|max:2100',
+            'post_cat' => 'required|string',
+            'pic_file' => 'nullable|image|max:5120',
+            'pdf_path' => 'nullable|file|mimes:pdf|max:10240',
+        ], [
+            'post_title.required' => 'Title is required.',
+            'post_year.required' => 'Year is required.',
+            'pic_file.image' => 'The file must be an image.',
+            'pic_file.max' => 'Image must not exceed 5MB.',
+            'pdf_path.mimes' => 'The file must be a PDF.',
+            'pdf_path.max' => 'PDF must not exceed 10MB.',
+        ]);
+
+        try {
+            $postItem = PostItem::findOrFail($id);
+
+            $data = [
+                'post_title' => $validated['post_title'],
+                'post_description' => $validated['post_description'] ?? '',
+                'post_description2' => '',
+                'post_survey' => $validated['post_survey'] ?? '',
+                'post_year' => $validated['post_year'],
+                'post_cat' => $validated['post_cat'],
+            ];
+
+            $categorySlug = strtolower(str_replace(' ', '', $validated['post_cat']));
+            $enutV2BasePath = config('filesystems.enutv2_path', 'C:/wamp64/www/enutV2/storage/app/public');
+
+            // Handle new image upload
+            if ($request->hasFile('pic_file')) {
+                // Delete old image if exists
+                if ($postItem->pic_file && $postItem->pic_file !== 'NA') {
+                    $oldImagePath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pic_file);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+
+                // Upload new image
+                $imageFile = $request->file('pic_file');
+                $imageName = time() . '_' . $imageFile->getClientOriginalName();
+                $imageDir = $enutV2BasePath . '/img/' . $categorySlug;
+
+                if (!file_exists($imageDir)) {
+                    mkdir($imageDir, 0755, true);
+                }
+
+                $imageFile->move($imageDir, $imageName);
+                $data['pic_file'] = 'storage/img/' . $categorySlug . '/' . $imageName;
+            }
+
+            // Handle new PDF upload
+            if ($request->hasFile('pdf_path')) {
+                // Delete old PDF if exists
+                if ($postItem->pdf_path) {
+                    $oldPdfPath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pdf_path);
+                    if (file_exists($oldPdfPath)) {
+                        unlink($oldPdfPath);
+                    }
+                }
+
+                // Upload new PDF
+                $pdfFile = $request->file('pdf_path');
+                $pdfName = time() . '_' . $pdfFile->getClientOriginalName();
+                $pdfDir = $enutV2BasePath . '/pdf/' . $categorySlug;
+
+                if (!file_exists($pdfDir)) {
+                    mkdir($pdfDir, 0755, true);
+                }
+
+                $pdfFile->move($pdfDir, $pdfName);
+                $data['pdf_path'] = 'storage/pdf/' . $categorySlug . '/' . $pdfName;
+            }
+
+            $postItem->update($data);
+
+            return redirect()->back()->with('success', 'Post item updated successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Post item update error: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Failed to update post item: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
     public function destroy($id)
     {
         try {

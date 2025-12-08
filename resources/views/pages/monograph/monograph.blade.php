@@ -13,4 +13,7 @@
 
         </div>
     </div>
+
+    {{-- Edit Modal Component (Hidden until triggered) --}}
+    <x-post-item.post-item-edit category="Monograph" />
 @endsection

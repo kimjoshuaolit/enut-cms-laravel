@@ -12,4 +12,7 @@
 
         </div>
     </div>
+
+    {{-- Edit Modal Component (Hidden until triggered) --}}
+    <x-gallery.gallery-edit category="Infographics" />
 @endsection

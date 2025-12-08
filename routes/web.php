@@ -35,10 +35,14 @@ Route::get('/infographics', function () {
 
 //post item routes
 Route::post('/post-items', [PostItemController::class, 'store'])->name('post-items.store');
+Route::get('/post-items/{id}/edit', [PostItemController::class, 'edit'])->name('post-items.edit');
+Route::put('/post-items/{id}', [PostItemController::class, 'update'])->name('post-items.update');
 Route::delete('/post-items/{id}', [PostItemController::class, 'destroy'])->name('post-items.destroy');
 
 //Gallery routes
 Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store');
+Route::get('/gallery/{id}/edit', [GalleryController::class, 'edit'])->name('gallery.edit');
+Route::put('/gallery/{id}', [GalleryController::class, 'update'])->name('gallery.update');
 Route::post('/gallery/update-order', [GalleryController::class, 'updateOrder'])->name('gallery.update-order');
 Route::delete('/gallery/{id}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
 
