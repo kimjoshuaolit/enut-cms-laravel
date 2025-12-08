@@ -36,14 +36,16 @@ class PostItemController extends Controller
             $data = [
                 'post_title' => $validated['post_title'],
                 'post_description' => $validated['post_description'] ?? null,
-                'post_description2' => '',  // ← ADD THIS LINE
-                'post_url' => '',           // ← ADD THIS LINE
-                'post_type' => 'NA',     // ← ADD THIS LINE
-                'date_pub' => 'NA',          // ← ADD THIS LINE
+                'post_description2' => '',
+                'post_url' => '',
+                'post_type' => 'NA',
+                'date_pub' => 'NA',
                 'post_survey' => $validated['post_survey'],
                 'post_year' => $validated['post_year'],
                 'post_cat' => $validated['post_cat'],
                 'status' => '1',
+                'pic_file' => '',
+                'pdf_path' => null,
             ];
 
             $categorySlug = strtolower(str_replace(' ', '', $validated['post_cat']));

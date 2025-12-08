@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostItemController;
-
+use App\Http\Controllers\GalleryController;
 // dashboard pages
 Route::get('/', function () {
     return view('pages.dashboard.enut-cms', ['title' => 'eNutrition CMS Dashboard']);
@@ -37,9 +37,9 @@ Route::get('/infographics', function () {
 Route::post('/post-items', [PostItemController::class, 'store'])->name('post-items.store');
 
 
-
-
-
+//Gallery routes
+Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store');
+Route::post('/gallery/update-order', [GalleryController::class, 'updateOrder'])->name('gallery.update-order');
 
 // tables pages
 Route::get('/basic-tables', function () {
