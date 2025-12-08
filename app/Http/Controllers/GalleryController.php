@@ -93,23 +93,29 @@ class GalleryController extends Controller
         }
     }
 
-    // public function updateOrder(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'items' => 'required|array',
-    //         'items.*.id' => 'required|exists:gallery,id',
-    //         'items.*.page_no' => 'required|string',
-    //     ]);
+    public function destroy($id)
+    {
+        try {
+            $galleryItem = Gallery::findOrFail($id);
 
-    //     try {
-    //         foreach ($validated['items'] as $item) {
-    //             Gallery::where('id', $item['id'])->update(['page_no' => $item['page_no']]);
-    //         }
+            // Define enutV2 base path
+            $enutV2BasePath = config('filesystems.enutv2_path', 'C:/wamp64/www/enutV2/storage/app/public');
 
-    //         return response()->json(['success' => true, 'message' => 'Order updated successfully!']);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Gallery order update error: ' . $e->getMessage());
-    //         return response()->json(['success' => false, 'message' => 'Failed to update order.'], 500);
-    //     }
-    // }
+            // Delete image file if exists
+            if ($galleryItem->file_path && $galleryItem->file_path !== 'NA') {
+                $imagePath = $enutV2BasePath . '/' . str_replace('storage/', '', $galleryItem->file_path);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
+            // Delete database record
+            $galleryItem->delete();
+
+            return redirect()->back()->with('success', 'Gallery item deleted successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Gallery deletion error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete gallery item.');
+        }
+    }
 }

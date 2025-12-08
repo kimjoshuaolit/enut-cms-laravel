@@ -102,4 +102,39 @@ class PostItemController extends Controller
                 ->withInput();
         }
     }
+
+    public function destroy($id)
+    {
+        try {
+            $postItem = PostItem::findOrFail($id);
+
+            //Define enutV2 base path
+            $enutV2BasePath = config('filesystem.enutv2_path', 'C:/wamp64/www/enutV2/storage/app/public');
+
+
+            // Delete image file if exists
+            if ($postItem->pic_file && $postItem->pic_file !== 'NA') {
+                $imagePath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pic_file);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
+            // Delete PDF file if exists
+            if ($postItem->pdf_path) {
+                $pdfPath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pdf_path);
+                if (file_exists($pdfPath)) {
+                    unlink($pdfPath);
+                }
+            }
+
+            // Delete database record
+            $postItem->delete();
+
+            return redirect()->back()->with('success', 'Post item deleted successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Post item deletion error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete post item: ' . $e->getMessage());
+        }
+    }
 }

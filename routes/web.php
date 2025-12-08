@@ -35,11 +35,12 @@ Route::get('/infographics', function () {
 
 //post item routes
 Route::post('/post-items', [PostItemController::class, 'store'])->name('post-items.store');
-
+Route::delete('/post-items/{id}', [PostItemController::class, 'destroy'])->name('post-items.destroy');
 
 //Gallery routes
 Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store');
 Route::post('/gallery/update-order', [GalleryController::class, 'updateOrder'])->name('gallery.update-order');
+Route::delete('/gallery/{id}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
 
 // tables pages
 Route::get('/basic-tables', function () {

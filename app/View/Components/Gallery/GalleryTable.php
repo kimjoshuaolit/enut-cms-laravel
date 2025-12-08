@@ -25,7 +25,7 @@ class GalleryTable extends Component
         $this->category = $category;
         $this->perPage = $perPage;
 
-        $this->galleryItem = Gallery::orderBy('created_at', 'asc')
+        $this->galleryItem = Gallery::orderBy('created_at', 'desc')
             ->paginate($this->perPage);
     }
 
