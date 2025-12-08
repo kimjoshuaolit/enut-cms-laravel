@@ -13,10 +13,17 @@
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
         {{-- Header Section --}}
         <div class="px-5 py-4 sm:px-6 border-b border-gray-100 dark:border-gray-800">
-            <h3 class="text-xl font-semibold text-gray-800 dark:text-white">{{ $category }}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Total: {{ $galleryItem->count() }} item{{ $galleryItem->count() !== 1 ? 's' : '' }}
-            </p>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white">{{ $category }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        Total: {{ $galleryItem->total() }} item{{ $galleryItem->total() !== 1 ? 's' : '' }}
+                        @if ($galleryItem->total() > 0)
+                            (Showing {{ $galleryItem->firstItem() }}-{{ $galleryItem->lastItem() }})
+                        @endif
+                    </p>
+                </div>
+            </div>
         </div>
 
         @if ($galleryItem->count() > 0)
@@ -26,15 +33,14 @@
                         <tr class="border-b border-gray-100 dark:border-gray-800">
                             <th class="px-5 py-3 text-left sm:px-6">
                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                                    Title & Area
+                                    Page No.
                                 </p>
                             </th>
                             <th class="px-5 py-3 text-left sm:px-6">
                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                                    Page No
+                                    Title & Area
                                 </p>
                             </th>
-
                             <th class="px-5 py-3 text-left sm:px-6">
                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
                                     Survey
@@ -52,11 +58,6 @@
                             </th>
                             <th class="px-5 py-3 text-left sm:px-6">
                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                                    PDF
-                                </p>
-                            </th>
-                            <th class="px-5 py-3 text-left sm:px-6">
-                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
                                     Actions
                                 </p>
                             </th>
@@ -66,7 +67,14 @@
                         @foreach ($galleryItem as $item)
                             <tr
                                 class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                                {{-- Title & Description --}}
+                                {{-- Page Number --}}
+                                <td class="px-5 py-4 sm:px-6">
+                                    <span class="font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                                        {{ $item->page_no }}
+                                    </span>
+                                </td>
+
+                                {{-- Title & Area --}}
                                 <td class="px-5 py-4 sm:px-6">
                                     <div>
                                         <span class="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
@@ -74,16 +82,10 @@
                                         </span>
                                         @if ($item->area)
                                             <span class="block text-gray-500 text-theme-xs dark:text-gray-400 mt-1">
-                                                {{ Str::limit($item->area, 60) }}
+                                                {{ $item->area }}
                                             </span>
                                         @endif
                                     </div>
-                                </td>
-                                {{-- page no --}}
-                                <td class="px-5 py-4 sm:px-6">
-                                    <p class="text-gray-500 text-theme-sm dark:text-gray-400">
-                                        {{ $item->page_no ?? 'N/A' }}
-                                    </p>
                                 </td>
 
                                 {{-- Survey --}}
@@ -96,14 +98,14 @@
                                 {{-- Year --}}
                                 <td class="px-5 py-4 sm:px-6">
                                     <p class="text-theme-xs inline-block rounded-full px-2 py-0.5 font-medium"
-                                        :class="getStatusClass({{ $item->post_year }})">
+                                        :class="getStatusClass({{ $item->cat_year }})">
                                         {{ $item->cat_year }}
                                     </p>
                                 </td>
 
                                 {{-- Image --}}
                                 <td class="px-5 py-4 sm:px-6">
-                                    @if ($item->file_path)
+                                    @if ($item->file_path && $item->file_path !== 'NA')
                                         <div
                                             class="w-12 h-12 overflow-hidden rounded-lg border-2 border-gray-200 dark:border-gray-700">
                                             <img src="{{ old_img_path($item->file_path) }}" alt="{{ $item->title }}"
@@ -113,28 +115,11 @@
                                         <div
                                             class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">sasdasd
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
                                         </div>
-                                    @endif
-                                </td>
-
-                                {{-- PDF --}}
-                                <td class="px-5 py-4 sm:px-6">
-                                    @if ($item->pdf_path)
-                                        <a href="{{ old_pdf_path($item->pdf_path) }}" target="_blank"
-                                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                            </svg>
-                                            <span class="text-theme-xs">View</span>
-                                        </a>
-                                    @else
-                                        <span class="text-gray-400 text-theme-xs dark:text-gray-500">No PDF</span>
                                     @endif
                                 </td>
 
@@ -165,7 +150,8 @@
 
                                         <button type="button"
                                             class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/15 dark:text-red-400 dark:hover:bg-red-500/25 transition-colors"
-                                            title="Delete">
+                                            title="Delete"
+                                            onclick="return confirm('Are you sure you want to delete this item?')">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -179,17 +165,24 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- Pagination --}}
+            @if ($galleryItem->hasPages())
+                <div class="px-5 py-4 sm:px-6 border-t border-gray-100 dark:border-gray-800">
+                    {{ $galleryItem->links() }}
+                </div>
+            @endif
         @else
             {{-- Empty State --}}
             <div class="px-5 py-12 sm:px-6 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 dark:text-gray-600"
                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <h3 class="mt-4 text-lg font-medium text-gray-800 dark:text-white">No items found</h3>
                 <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    No post items found for "{{ $category }}"
+                    No gallery items found for "{{ $category }}"
                 </p>
             </div>
         @endif

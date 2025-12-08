@@ -34,6 +34,8 @@ class GalleryController extends Controller
             // Get the highest page number (extract number from "Page X" format)
             $lastPageEntry = Gallery::where('title', $validated['title'])
                 ->where('area', $validated['area'])
+                ->where('cat_year', $validated['cat_year'])
+                ->where('cat_title', $validated['cat_title'])
                 ->orderBy('page_no', 'desc')
                 ->first();
 
@@ -91,23 +93,23 @@ class GalleryController extends Controller
         }
     }
 
-    public function updateOrder(Request $request)
-    {
-        $validated = $request->validate([
-            'items' => 'required|array',
-            'items.*.id' => 'required|exists:gallery,id',
-            'items.*.page_no' => 'required|string',
-        ]);
+    // public function updateOrder(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'items' => 'required|array',
+    //         'items.*.id' => 'required|exists:gallery,id',
+    //         'items.*.page_no' => 'required|string',
+    //     ]);
 
-        try {
-            foreach ($validated['items'] as $item) {
-                Gallery::where('id', $item['id'])->update(['page_no' => $item['page_no']]);
-            }
+    //     try {
+    //         foreach ($validated['items'] as $item) {
+    //             Gallery::where('id', $item['id'])->update(['page_no' => $item['page_no']]);
+    //         }
 
-            return response()->json(['success' => true, 'message' => 'Order updated successfully!']);
-        } catch (\Exception $e) {
-            \Log::error('Gallery order update error: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Failed to update order.'], 500);
-        }
-    }
+    //         return response()->json(['success' => true, 'message' => 'Order updated successfully!']);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Gallery order update error: ' . $e->getMessage());
+    //         return response()->json(['success' => false, 'message' => 'Failed to update order.'], 500);
+    //     }
+    // }
 }

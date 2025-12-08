@@ -15,7 +15,10 @@
         <div class="px-5 py-4 sm:px-6 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-xl font-semibold text-gray-800 dark:text-white">{{ $category }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Total: {{ $postItems->count() }} item{{ $postItems->count() !== 1 ? 's' : '' }}
+                Total: {{ $postItems->total() }} item{{ $postItems->total() !== 1 ? 's' : '' }}
+                @if ($postItems->total() > 0)
+                    (Showing {{ $postItems->firstItem() }}-{{ $postItems->lastItem() }})
+                @endif
             </p>
         </div>
 
@@ -83,7 +86,8 @@
 
                                 {{-- Year --}}
                                 <td class="px-5 py-4 sm:px-6">
-                                    <p class="text-theme-xs inline-block rounded-full px-2 py-0.5 font-medium">
+                                    <p class="text-theme-xs inline-block rounded-full px-2 py-0.5 font-medium"
+                                        :class="getStatusClass({{ $item->post_year }})">
                                         {{ $item->post_year }}
                                     </p>
                                 </td>
@@ -93,8 +97,8 @@
                                     @if ($item->pic_file && $item->pic_file != 'NA')
                                         <div
                                             class="w-12 h-12 overflow-hidden rounded-lg border-2 border-gray-200 dark:border-gray-700">
-                                            <img src="{{ old_img_path($item->pic_file) }}" alt="{{ $item->post_title }}"
-                                                class="w-full h-full object-cover">
+                                            <img src="{{ old_img_path($item->pic_file) }}"
+                                                alt="{{ $item->post_title }}" class="w-full h-full object-cover">
                                         </div>
                                     @else
                                         <div
@@ -152,7 +156,8 @@
 
                                         <button type="button"
                                             class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/15 dark:text-red-400 dark:hover:bg-red-500/25 transition-colors"
-                                            title="Delete">
+                                            title="Delete"
+                                            onclick="return confirm('Are you sure you want to delete this item?')">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -166,6 +171,13 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- Pagination --}}
+            @if ($postItems->hasPages())
+                <div class="px-5 py-4 sm:px-6 border-t border-gray-100 dark:border-gray-800">
+                    {{ $postItems->links() }}
+                </div>
+            @endif
         @else
             {{-- Empty State --}}
             <div class="px-5 py-12 sm:px-6 text-center">

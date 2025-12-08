@@ -15,25 +15,18 @@ class GalleryTable extends Component
 
     public $galleryItem;
     public string $category;
-    public function __construct(string $category)
+    public int $perPage;
+    public function __construct(string $category, int $perPage = 10)
     {
 
 
 
 
         $this->category = $category;
-        $this->galleryItem = Gallery::select(
-            'id',
-            'title',
-            'area',
-            'page_no',
-            'cat_title',
-            'cat_year',
-            'file_path',
-        )
-            // ->where('category', $category)
-            ->orderBy('id', 'desc')
-            ->get();
+        $this->perPage = $perPage;
+
+        $this->galleryItem = Gallery::orderBy('created_at', 'asc')
+            ->paginate($this->perPage);
     }
 
 

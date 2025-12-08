@@ -11,10 +11,12 @@ class PostItemsTable extends Component
 {
     public $postItems;
     public string $category;
+    public int $perPage;
 
-    public function __construct(string $category)
+    public function __construct(string $category, int $perPage = 10)
     {
         $this->category = $category;
+        $this->perPage = $perPage;
 
 
         $this->postItems = PostItem::select(
@@ -29,7 +31,7 @@ class PostItemsTable extends Component
         )
             ->where('post_cat', $category)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate($this->perPage);
     }
 
     public function getImageUrl($path): string

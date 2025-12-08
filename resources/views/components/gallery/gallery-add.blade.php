@@ -5,11 +5,21 @@
 
     handleFiles(event) {
         const files = Array.from(event.target.files);
-        this.previewImages = files.map((file, index) => ({
-            file: file,
-            url: URL.createObjectURL(file),
-            order: index + 1
-        }));
+
+        // Debug log
+        console.log('Files selected:', files.length);
+
+        this.previewImages = files.map((file, index) => {
+            const url = URL.createObjectURL(file);
+            console.log('Created preview URL:', url); // Debug log
+            return {
+                file: file,
+                url: url,
+                order: index + 1
+            };
+        });
+
+        console.log('Preview images:', this.previewImages); // Debug log
     },
 
     dragStart(index) {
@@ -237,47 +247,56 @@
                                 <div class="flex items-center justify-between mb-3">
                                     <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
                                         Preview (<span x-text="previewImages.length"></span> images) - <span
-                                            class="text-blue-600">Drag to reorder</span>
+                                            class="text-blue-600 dark:text-blue-400">Drag to reorder</span>
                                     </p>
                                 </div>
+
                                 <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                                     <template x-for="(image, index) in previewImages" :key="index">
-                                        <div @dragstart="dragStart(index)" @dragover="dragOver($event)"
-                                            @drop="drop(index)" draggable="true" class="relative group cursor-move">
-                                            <img :src="image.url"
-                                                class="w-full h-24 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600 group-hover:border-blue-500 transition-colors">
+                                        <div class="relative group" @dragstart="dragStart(index)"
+                                            @dragover="dragOver($event)" @drop="drop(index)" draggable="true">
 
-                                            {{-- Page Number Badge --}}
+                                            {{-- Main Image Container --}}
                                             <div
-                                                class="absolute top-1 left-1 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
-                                                <span x-text="'Page ' + image.order"></span>
-                                            </div>
+                                                class="relative w-full h-24 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-600 group-hover:border-blue-500 transition-colors cursor-move">
+                                                <img :src="image.url" class="w-full h-full object-cover"
+                                                    draggable="false">
 
-                                            {{-- Remove Button --}}
-                                            <button @click="removeImage(index)" type="button"
-                                                class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
+                                                {{-- Page Number Badge - High z-index --}}
+                                                <div
+                                                    class="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded shadow-lg z-20 pointer-events-none">
+                                                    Page <span x-text="image.order"></span>
+                                                </div>
 
-                                            {{-- Drag Handle --}}
-                                            <div
-                                                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-8 w-8 text-white opacity-0 group-hover:opacity-100"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                                </svg>
+                                                {{-- Remove Button - Highest z-index and clickable --}}
+                                                <button @click.prevent.stop="removeImage(index)" type="button"
+                                                    class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-30 cursor-pointer">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3"
+                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+
+                                                {{-- Drag Indicator - Lowest z-index, non-interactive --}}
+                                                <div
+                                                    class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity flex items-center justify-center z-10 pointer-events-none">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                    </svg>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-                                    💡 Drag images to change the page order. The order here determines the page numbers.
+
+                                <p class="mt-3 text-xs text-center text-gray-500 dark:text-gray-400">
+                                    💡 <strong>Tip:</strong> Drag images to reorder. Click X to remove. The order here
+                                    will be the page numbers.
                                 </p>
                             </div>
 
