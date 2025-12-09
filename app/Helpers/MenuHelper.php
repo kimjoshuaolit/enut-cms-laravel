@@ -15,11 +15,7 @@ class MenuHelper
                 //     ['name' => 'eNutrition', 'path' => '/'],
                 // ],
             ],
-            // [
-            //     'icon' => 'calendar',
-            //     'name' => 'Calendar',
-            //     'path' => '/calendar',
-            // ],
+
             [
                 'icon' => 'user-profile',
                 'name' => 'User Profile',
@@ -36,20 +32,18 @@ class MenuHelper
                 ],
             ],
             [
-                'name' => 'Tables',
+                'name' => 'Public Use File',
                 'icon' => 'tables',
-                'subItems' => [
-                    ['name' => 'Basic Tables', 'path' => '/basic-tables', 'pro' => false]
-                ],
+                'path' => '/puf',
             ],
-            [
-                'name' => 'Pages',
-                'icon' => 'pages',
-                'subItems' => [
-                    ['name' => 'Blank Page', 'path' => '/blank', 'pro' => false],
-                    ['name' => '404 Error', 'path' => '/error-404', 'pro' => false]
-                ],
-            ],
+            // [
+            //     'name' => 'Pages',
+            //     'icon' => 'pages',
+            //     'subItems' => [
+            //         ['name' => 'Blank Page', 'path' => '/blank', 'pro' => false],
+            //         ['name' => '404 Error', 'path' => '/error-404', 'pro' => false]
+            //     ],
+            // ],
         ];
     }
 

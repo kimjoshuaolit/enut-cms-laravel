@@ -15,9 +15,13 @@
         <div class="px-5 py-4 sm:px-6 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-xl font-semibold text-gray-800 dark:text-white">{{ $category }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Total: {{ $postItems->total() }} item{{ $postItems->total() !== 1 ? 's' : '' }}
-                @if ($postItems->total() > 0)
-                    (Showing {{ $postItems->firstItem() }}-{{ $postItems->lastItem() }})
+                @if (method_exists($postItems, 'total'))
+                    Total: {{ $postItems->total() }} item{{ $postItems->total() !== 1 ? 's' : '' }}
+                    @if ($postItems->total() > 0)
+                        (Showing {{ $postItems->firstItem() }}-{{ $postItems->lastItem() }})
+                    @endif
+                @else
+                    Total: {{ $postItems->count() }} item{{ $postItems->count() !== 1 ? 's' : '' }}
                 @endif
             </p>
         </div>
@@ -25,6 +29,7 @@
         @if ($postItems->count() > 0)
             <div class="max-w-full overflow-x-auto custom-scrollbar">
                 <table class="w-full min-w-[1102px]">
+                    {{-- Table head and body remain the same --}}
                     <thead>
                         <tr class="border-b border-gray-100 dark:border-gray-800">
                             <th class="px-5 py-3 text-left sm:px-6">
@@ -61,8 +66,9 @@
                     </thead>
                     <tbody>
                         @foreach ($postItems as $item)
-                            <tr
-                                class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                            <tr id="item-{{ $item->id }}"
+                                class="scroll-mt-24 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                                {{-- Rest of your table row code stays the same --}}
                                 {{-- Title & Description --}}
                                 <td class="px-5 py-4 sm:px-6">
                                     <div>
@@ -94,7 +100,7 @@
 
                                 {{-- Image --}}
                                 <td class="px-5 py-4 sm:px-6">
-                                    @if ($item->pic_file && $item->pic_file != 'NA')
+                                    @if ($item->pic_file && $item->pic_file != 'NA' && $item->pic_file != 'N/A' && $item->pic_file != 'na')
                                         <div
                                             class="w-12 h-12 overflow-hidden rounded-lg border-2 border-gray-200 dark:border-gray-700">
                                             <img src="{{ old_img_path($item->pic_file) }}"
@@ -132,19 +138,6 @@
                                 {{-- Actions --}}
                                 <td class="px-5 py-4 sm:px-6">
                                     <div class="flex items-center gap-2">
-                                        <a href="#"
-                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/15 dark:text-blue-400 dark:hover:bg-blue-500/25 transition-colors"
-                                            title="View">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </a>
-
-                                        {{-- EDIT BUTTON --}}
                                         <button type="button"
                                             @click="$dispatch('open-edit', { id: {{ $item->id }} })"
                                             class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 dark:bg-yellow-500/15 dark:text-yellow-400 dark:hover:bg-yellow-500/25 transition-colors"
@@ -156,7 +149,6 @@
                                             </svg>
                                         </button>
 
-                                        {{-- DELETE FORM --}}
                                         <form action="{{ route('post-items.destroy', $item->id) }}" method="POST"
                                             class="inline-block"
                                             onsubmit="return confirm('Are you sure you want to delete this item? This will also delete the associated files.')">
@@ -173,8 +165,6 @@
                                                 </svg>
                                             </button>
                                         </form>
-
-
                                     </div>
                                 </td>
                             </tr>
@@ -183,8 +173,8 @@
                 </table>
             </div>
 
-            {{-- Pagination --}}
-            @if ($postItems->hasPages())
+            {{-- Pagination - Only show if paginated --}}
+            @if (method_exists($postItems, 'hasPages') && $postItems->hasPages())
                 <div class="px-5 py-4 sm:px-6 border-t border-gray-100 dark:border-gray-800">
                     {{ $postItems->links() }}
                 </div>

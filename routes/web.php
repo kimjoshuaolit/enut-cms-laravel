@@ -4,22 +4,24 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostItemController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\SearchController;
+
+
 // dashboard pages
 Route::get('/', function () {
     return view('pages.dashboard.enut-cms', ['title' => 'eNutrition CMS Dashboard']);
 })->name('dashboard');
 
-// calender pages
-Route::get('/calendar', function () {
-    return view('pages.calender', ['title' => 'Calendar']);
-})->name('calendar');
-
+// search route
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/search/quick', [SearchController::class, 'quickSearch'])->name('search.quick');
+Route::get('/view/{type}/{id}', [SearchController::class, 'viewItem'])->name('search.view-item');
 // profile pages
 Route::get('/profile', function () {
     return view('pages.profile', ['title' => 'Profile']);
 })->name('profile');
 
-// form pages
+// resources pages
 Route::get('/factsandfigure', function () {
     return view('pages.factsandfigures.facts-figures', ['title' => 'Facts and Figures']);
 })->name('facts-figures');
@@ -31,7 +33,10 @@ Route::get('/presentation', function () {
 })->name('presentation');
 Route::get('/infographics', function () {
     return view('pages.infographics.infographics', ['title' => 'Infographics']);
-})->name('infographics');
+})->name('puf');
+Route::get('/puf', function () {
+    return view('pages.puf.puf', ['title' => 'Infographics']);
+})->name('puf');
 
 //post item routes
 Route::post('/post-items', [PostItemController::class, 'store'])->name('post-items.store');
@@ -47,9 +52,9 @@ Route::post('/gallery/update-order', [GalleryController::class, 'updateOrder'])-
 Route::delete('/gallery/{id}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
 
 // tables pages
-Route::get('/basic-tables', function () {
-    return view('pages.tables.basic-tables', ['title' => 'Basic Tables']);
-})->name('basic-tables');
+// Route::get('/basic-tables', function () {
+//     return view('pages.tables.basic-tables', ['title' => 'Basic Tables']);
+// })->name('basic-tables');
 
 // pages
 

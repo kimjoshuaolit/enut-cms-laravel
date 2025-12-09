@@ -66,8 +66,8 @@
             </button>
 
             <!-- Search Bar (desktop only) -->
-            <div class="hidden xl:block">
-                <form>
+            <div class="hidden xl:block" x-data="searchComponent()">
+                <form action="{{ route('search') }}" method="GET" @submit="handleSubmit($event)">
                     <div class="relative">
                         <span class="absolute -translate-y-1/2 pointer-events-none left-4 top-1/2">
                             <!-- Search Icon -->
@@ -78,16 +78,149 @@
                                     fill="" />
                             </svg>
                         </span>
-                        <input type="text" placeholder="Search or type command..."
+                        <input type="text" name="q" x-model="searchQuery"
+                            @input.debounce.300ms="fetchQuickResults" @focus="showDropdown = true"
+                            @keydown.escape="showDropdown = false" placeholder="Search posts or infographics..."
                             class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-lime-300 focus:outline-hidden focus:ring-3 focus:ring-lime-500/10 dark:border-gray-800 dark:bg-white/3 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-lime-800 xl:w-[430px]" />
-                        <button
+                        <button type="submit"
                             class="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400">
                             <span> ⌘ </span>
                             <span> K </span>
                         </button>
                     </div>
+
+                    {{-- Quick Search Dropdown --}}
+                    <div x-show="showDropdown && searchQuery.length >= 2" x-cloak @click.away="showDropdown = false"
+                        class="absolute mt-2 w-full xl:w-[430px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto z-50">
+
+                        {{-- Loading State --}}
+                        <div x-show="loading" class="p-4 text-center text-gray-500 dark:text-gray-400">
+                            <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </div>
+
+                        {{-- Results --}}
+                        <div x-show="!loading && results.length > 0" class="py-2">
+                            <template x-for="result in results" :key="result.id">
+                                <a :href="`/${result.route}#item-${result.id}`"
+                                    class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <div class="flex items-start gap-3">
+                                        {{-- Icon --}}
+                                        <div class="flex-shrink-0 mt-1">
+                                            <template x-if="result.type === 'post'">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </template>
+                                            <template x-if="result.type === 'gallery'">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-5 w-5 text-purple-600 dark:text-purple-400"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </template>
+                                        </div>
+
+                                        {{-- Content --}}
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate"
+                                                x-text="result.title"></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                <template x-if="result.type === 'post'">
+                                                    <span x-text="`${result.category} • ${result.year}`"></span>
+                                                </template>
+                                                <template x-if="result.type === 'gallery'">
+                                                    <span x-text="`${result.area} • ${result.page}`"></span>
+                                                </template>
+                                            </p>
+                                        </div>
+
+                                        {{-- Type Badge --}}
+                                        <span class="flex-shrink-0 text-xs px-2 py-1 rounded"
+                                            :class="result.type === 'post' ?
+                                                'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' :
+                                                'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400'"
+                                            x-text="result.type === 'post' ? 'Post' : 'Gallery'"></span>
+                                    </div>
+                                </a>
+                            </template>
+
+                            {{-- View All Results --}}
+                            <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-3">
+                                <button type="submit"
+                                    class="text-sm text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 font-medium">
+                                    View all results for "<span x-text="searchQuery"></span>" →
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- No Results --}}
+                        <div x-show="!loading && searchQuery.length >= 2 && results.length === 0"
+                            class="p-4 text-center text-gray-500 dark:text-gray-400">
+                            <p class="text-sm">No results found for "<span x-text="searchQuery"></span>"</p>
+                        </div>
+                    </div>
                 </form>
             </div>
+
+            <script>
+                function searchComponent() {
+                    return {
+                        searchQuery: '',
+                        results: [],
+                        showDropdown: false,
+                        loading: false,
+
+                        async fetchQuickResults() {
+                            if (this.searchQuery.length < 2) {
+                                this.results = [];
+                                return;
+                            }
+
+                            this.loading = true;
+                            try {
+                                const response = await fetch(`/search/quick?q=${encodeURIComponent(this.searchQuery)}`);
+                                this.results = await response.json();
+                                this.showDropdown = true;
+                            } catch (error) {
+                                console.error('Search error:', error);
+                            } finally {
+                                this.loading = false;
+                            }
+                        },
+                        getResultUrl(result) {
+                            return `/view/${result.type}/${result.id}`;
+                        }
+                        // getResultUrl(result) {
+                        //     if (result.type === 'post') {
+                        //         const categorySlug = result.catergory.toLowerCase().replace(/\s+/g, '');
+                        //         return `/${catergorySlug}#item-${result.id}`;
+                        //     } else {
+                        //         return `/infographics#item-${result.id}`;
+                        //     }
+                        // },
+
+                        handleSubmit(event) {
+                            if (this.searchQuery.length < 2) {
+                                event.preventDefault();
+                                alert('Please enter at least 2 characters to search');
+                            }
+                        }
+                    }
+                }
+            </script>
         </div>
 
         <!-- Application Menu (mobile) and Right Side Actions (desktop) -->

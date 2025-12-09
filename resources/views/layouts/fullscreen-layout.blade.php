@@ -110,6 +110,62 @@ window.addEventListener('resize', checkMobile);">
 
     @yield('content')
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there's a hash in the URL
+            if (window.location.hash) {
+                const targetId = window.location.hash.substring(1); // Remove the #
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    // Wait a bit for the page to fully render
+                    setTimeout(() => {
+                        // Scroll to the element
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+
+                        // Add highlight effect
+                        targetElement.classList.add('highlight-row');
+
+                        // Remove highlight after 3 seconds
+                        setTimeout(() => {
+                            targetElement.classList.remove('highlight-row');
+                        }, 3000);
+                    }, 300);
+                }
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+            console.log('Hash:', window.location.hash);
+
+            if (window.location.hash) {
+                const targetId = window.location.hash.substring(1);
+                console.log('Looking for element:', targetId);
+                const targetElement = document.getElementById(targetId);
+                console.log('Found element:', targetElement);
+
+                if (targetElement) {
+                    setTimeout(() => {
+                        console.log('Scrolling and highlighting...');
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                        targetElement.classList.add('highlight-row');
+                        setTimeout(() => {
+                            targetElement.classList.remove('highlight-row');
+                        }, 3000);
+                    }, 500);
+                }
+            }
+        });
+    </script>
+
 </body>
 
 @stack('scripts')

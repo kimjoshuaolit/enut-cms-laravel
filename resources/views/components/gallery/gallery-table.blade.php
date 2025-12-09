@@ -65,8 +65,8 @@
                     </thead>
                     <tbody>
                         @foreach ($galleryItem as $item)
-                            <tr
-                                class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                            <tr id ="item-{{ $item->id }}"
+                                class="scroll-mt-24 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                 {{-- Page Number --}}
                                 <td class="px-5 py-4 sm:px-6">
                                     <span class="font-medium text-gray-800 text-theme-sm dark:text-white/90">
@@ -126,7 +126,7 @@
                                 {{-- Actions --}}
                                 <td class="px-5 py-4 sm:px-6">
                                     <div class="flex items-center gap-2">
-                                        <a href="#"
+                                        {{-- <a href="#"
                                             class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/15 dark:text-blue-400 dark:hover:bg-blue-500/25 transition-colors"
                                             title="View">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
@@ -136,7 +136,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
-                                        </a>
+                                        </a> --}}
                                         {{-- EDIT FORM --}}
                                         <button type="button"
                                             @click="$dispatch('open-gallery-edit', { id: {{ $item->id }} })"

@@ -888,3 +888,27 @@ pre[class*='language-'] {
         fill: none !important;
     }
 }
+/* Highlight animation for search results */
+@keyframes highlight {
+    0% {
+        background-color: rgba(132, 204, 22, 0.3);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.highlight-row {
+    animation: highlight 3s ease-in-out;
+    background-color: rgba(132, 204, 22, 0.2);
+}
+
+/* Dark mode highlight */
+.dark .highlight-row {
+    background-color: rgba(132, 204, 22, 0.1);
+}
+
+/* Scroll margin for fixed header */
+.scroll-mt-24 {
+    scroll-margin-top: 6rem;
+}

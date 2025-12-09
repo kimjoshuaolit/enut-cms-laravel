@@ -9,26 +9,28 @@ use App\Models\Gallery;
 
 class GalleryTable extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-
     public $galleryItem;
     public string $category;
     public int $perPage;
-    public function __construct(string $category, int $perPage = 10)
+
+    public function __construct(string $category = '', int $perPage = 10)
     {
-
-
-
-
         $this->category = $category;
         $this->perPage = $perPage;
 
-        $this->galleryItem = Gallery::orderBy('created_at', 'desc')
+        // Build query
+        $query = Gallery::query();
+
+        // Only filter by category if provided and not empty
+        if (!empty($category) && $category !== 'Infographics') {
+            $query->where('cat_title', $category);
+        }
+
+        $this->galleryItem = $query
+            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate($this->perPage);
     }
-
 
     public function render(): View|Closure|string
     {
