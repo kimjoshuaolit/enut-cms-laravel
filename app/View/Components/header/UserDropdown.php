@@ -5,15 +5,14 @@ namespace App\View\Components\header;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\Auth;
 
 class UserDropdown extends Component
 {
-    /**
-     * Create a new component instance.
-     */
+    public $user;
     public function __construct()
     {
-        //
+        $this->user = Auth::user();
     }
 
     /**

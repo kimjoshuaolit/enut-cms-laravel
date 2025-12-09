@@ -5,15 +5,15 @@ namespace App\View\Components\profile;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\Auth;
 
 class PersonalInfoCard extends Component
 {
-    /**
-     * Create a new component instance.
-     */
+    public $user;
+
     public function __construct()
     {
-        //
+        $this->user = Auth::user();
     }
 
     /**
