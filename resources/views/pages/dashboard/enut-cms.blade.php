@@ -11,9 +11,9 @@
 
 
         <div class="col-span-12 space-y-6">
-            <x-enutrition.statistics-chart />
+            {{-- <x-enutrition.statistics-chart /> --}}
 
-            <x-enutrition.recent-orders />
+            {{-- <x-enutrition.recent-orders /> --}}
         </div>
 
         {{-- s --}}
