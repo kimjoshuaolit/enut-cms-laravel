@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PostItem;
-use Illuminate\Support\Facades\Storage;
+use App\Services\LegacyFileService;
+use Illuminate\Support\Facades\Log;
 
 class PostItemController extends Controller
 {
-    /**
-     * Store a newly created post item
-     */
+    protected $legacyFileService;
+
+    public function __construct(LegacyFileService $legacyFileService)
+    {
+        $this->legacyFileService = $legacyFileService;
+    }
+
     public function store(Request $request)
     {
-        // Validation - same as Livewire component
+
         $validated = $request->validate([
             'post_title' => 'required|string|min:3|max:255',
             'post_description' => 'nullable|string|max:1000',
@@ -48,55 +53,43 @@ class PostItemController extends Controller
                 'pdf_path' => null,
             ];
 
-            $categorySlug = strtolower(str_replace(' ', '', $validated['post_cat']));
-
-            // Define enutV2 base path
-            $enutV2BasePath = 'C:/wamp64/www/enutV2/storage/app/public';
-
-            // Handle image upload to enutV2
             if ($request->hasFile('pic_file')) {
-                $imageFile = $request->file('pic_file');
-                $imageName = time() . '_' . $imageFile->getClientOriginalName();
+                $imagePath = $this->legacyFileService->uploadImage(
+                    $request->file('pic_file'),
+                    $validated['post_cat']
+                );
 
-                // Create directory if it doesn't exist
-                $imageDir = $enutV2BasePath . '/img/' . $categorySlug;
-                if (!file_exists($imageDir)) {
-                    mkdir($imageDir, 0755, true);
+                if ($imagePath) {
+                    $data['pic_file'] = $imagePath;
+                } else {
+                    return redirect()->back()
+                        ->with('error', 'Failed to upload Image to storage system.')
+                        ->withInput();
                 }
-
-                // Move file to enutV2 directory
-                $imageFile->move($imageDir, $imageName);
-
-                // Store path for database (relative path that matches old structure)
-                $data['pic_file'] = 'storage/img/' . $categorySlug . '/' . $imageName;
             }
 
-            // Handle PDF upload to enutV2
+            //upload pdf via API
+
             if ($request->hasFile('pdf_path')) {
-                $pdfFile = $request->file('pdf_path');
-                $pdfName = time() . '_' . $pdfFile->getClientOriginalName();
+                $pdfPath = $this->legacyFileService->uploadPdf(
+                    $request->file('pdf_path'),
+                    $validated['post_cat']
+                );
 
-                // Create directory if it doesn't exist
-                $pdfDir = $enutV2BasePath . '/pdf/' . $categorySlug;
-                if (!file_exists($pdfDir)) {
-                    mkdir($pdfDir, 0755, true);
+                if ($pdfPath) {
+                    $data['pdf_path'] = $pdfPath;
+                } else {
+                    return redirect()->back()
+                        ->with('error', 'Failed to upload PDF to storage system.')
+                        ->withInput();
                 }
-
-                // Move file to enutV2 directory
-                $pdfFile->move($pdfDir, $pdfName);
-
-                // Store path for database (relative path that matches old structure)
-                $data['pdf_path'] = 'storage/pdf/' . $categorySlug . '/' . $pdfName;
             }
 
-            // Create post item - same as Livewire
             PostItem::create($data);
 
-            // Success message - same as Livewire
             return redirect()->back()->with('success', 'Post item created successfully!');
         } catch (\Exception $e) {
-            // Error handling - same as Livewire
-            \Log::error('Post item creation error: ' . $e->getMessage());
+            Log::error('Post item creation error: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Failed to create post item: ' . $e->getMessage())
                 ->withInput();
@@ -144,60 +137,48 @@ class PostItemController extends Controller
                 'post_cat' => $validated['post_cat'],
             ];
 
-            $categorySlug = strtolower(str_replace(' ', '', $validated['post_cat']));
-            $enutV2BasePath = config('filesystems.enutv2_path', 'C:/wamp64/www/enutV2/storage/app/public');
 
             // Handle new image upload
             if ($request->hasFile('pic_file')) {
                 // Delete old image if exists
                 if ($postItem->pic_file && $postItem->pic_file !== 'NA') {
-                    $oldImagePath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pic_file);
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
+                    $this->legacyFileService->deleteFile($postItem->pic_file);
                 }
 
                 // Upload new image
-                $imageFile = $request->file('pic_file');
-                $imageName = time() . '_' . $imageFile->getClientOriginalName();
-                $imageDir = $enutV2BasePath . '/img/' . $categorySlug;
+                $imagePath = $this->legacyFileService->uploadImage(
+                    $request->file('pic_file'),
+                    $validated['post_cat']
+                );
 
-                if (!file_exists($imageDir)) {
-                    mkdir($imageDir, 0755, true);
+                if ($imagePath) {
+                    $data['pic_file'] = $imagePath;
                 }
-
-                $imageFile->move($imageDir, $imageName);
-                $data['pic_file'] = 'storage/img/' . $categorySlug . '/' . $imageName;
             }
 
             // Handle new PDF upload
             if ($request->hasFile('pdf_path')) {
-                // Delete old PDF if exists
+                //Delete old PDF from enutV2
                 if ($postItem->pdf_path) {
-                    $oldPdfPath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pdf_path);
-                    if (file_exists($oldPdfPath)) {
-                        unlink($oldPdfPath);
-                    }
+                    $this->legacyFileService->deleteFile($postItem->pdf_path);
                 }
 
-                // Upload new PDF
-                $pdfFile = $request->file('pdf_path');
-                $pdfName = time() . '_' . $pdfFile->getClientOriginalName();
-                $pdfDir = $enutV2BasePath . '/pdf/' . $categorySlug;
+                //Upload new PDF
 
-                if (!file_exists($pdfDir)) {
-                    mkdir($pdfDir, 0755, true);
+                $pdfPath = $this->legacyFileService->uploadPdf(
+                    $request->file('pdf_path'),
+                    $validated['post_cat']
+                );
+                if ($pdfPath) {
+                    $data['pdf_path'] = $pdfPath;
                 }
-
-                $pdfFile->move($pdfDir, $pdfName);
-                $data['pdf_path'] = 'storage/pdf/' . $categorySlug . '/' . $pdfName;
             }
 
             $postItem->update($data);
 
             return redirect()->back()->with('success', 'Post item updated successfully!');
         } catch (\Exception $e) {
-            \Log::error('Post item update error: ' . $e->getMessage());
+            Log::error('Post item update error: ' . $e->getMessage());
             return redirect()->back()
                 ->with('error', 'Failed to update post item: ' . $e->getMessage())
                 ->withInput();
@@ -213,19 +194,12 @@ class PostItemController extends Controller
 
 
             // Delete image file if exists
-            if ($postItem->pic_file && $postItem->pic_file !== 'NA') {
-                $imagePath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pic_file);
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
+            if ($postItem->pic_filel && $postItem->pic_file !== 'NA') {
+                $this->legacyFileService->deleteFile($postItem->pic_file);
             }
-
             // Delete PDF file if exists
             if ($postItem->pdf_path) {
-                $pdfPath = $enutV2BasePath . '/' . str_replace('storage/', '', $postItem->pdf_path);
-                if (file_exists($pdfPath)) {
-                    unlink($pdfPath);
-                }
+                $this->legacyFileService->deleteFile($postItem->pdf_path);
             }
 
             // Delete database record
@@ -233,7 +207,7 @@ class PostItemController extends Controller
 
             return redirect()->back()->with('success', 'Post item deleted successfully!');
         } catch (\Exception $e) {
-            \Log::error('Post item deletion error: ' . $e->getMessage());
+            Log::error('Post item deletion error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to delete post item: ' . $e->getMessage());
         }
     }
