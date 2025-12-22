@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'legacy_api' => [
+        'base_url' => env('LEGACY_API_URL', 'http://localhost:8000/api'),
+        'api_key' => env('LEGACY_API_KEY', ''),
+    ],
+
 
 ];

@@ -12,12 +12,16 @@ use Illuminate\Support\Facades\Log;
 class LegacyFileService
 {
     protected $baseUrl;
+    protected $apiKey;
 
     public function __construct()
     {
         // URL to enutV2 API
         // Change this if enutV2 is on a different server or port
-        $this->baseUrl = 'http://localhost:8000/api';
+        $this->baseUrl = config('services.legacy_api.base_url');
+        $this->apiKey = config('services.legacy_api.api_key');
+        //for production
+        // $this->baseUrl = config('services.legacy_api.base_url');
     }
 
     /**
@@ -64,6 +68,36 @@ class LegacyFileService
             Log::error('Image upload to enutV2 error: ' . $e->getMessage());
             return null;
         }
+
+        // try {
+        //     $response = Http::timeout(30)
+        //         ->withHeaders([
+        //             'X-API-Key' => $this->apiKey,  // ← Add API key
+        //         ])
+        //         ->attach(
+        //             'file',
+        //             file_get_contents($file->path()),
+        //             $file->getClientOriginalName()
+        //         )
+        //         ->post($this->baseUrl . '/upload-image', [
+        //             'category' => $category,
+        //         ]);
+
+        //     if ($response->successful()) {
+        //         $data = $response->json();
+        //         return $data['path'] ?? null;
+        //     }
+
+        //     Log::error('Image upload failed', [
+        //         'status' => $response->status(),
+        //         'response' => $response->body(),
+        //     ]);
+
+        //     return null;
+        // } catch (\Exception $e) {
+        //     Log::error('Image upload error: ' . $e->getMessage());
+        //     return null;
+        // }
     }
 
     /**
@@ -124,6 +158,96 @@ class LegacyFileService
             // Log any exceptions
             Log::error('File deletion from enutV2 error: ' . $e->getMessage());
             return false;
+        }
+    }
+    /**
+     * Upload multiple gallery images
+     */
+    public function uploadGalleryImages(array $files, int $year, string $area): ?array
+    {
+        try {
+            Log::info('Attempting gallery images upload to enutV2', [
+                'count' => count($files),
+                'year' => $year,
+                'area' => $area,
+            ]);
+
+            $http = Http::timeout(30)
+                ->withHeaders([
+                    'X-API-Key' => $this->apiKey,
+                    'Accept' => 'application/json',
+                ]);
+
+            // Attach each file
+            foreach ($files as $index => $file) {
+                $http->attach(
+                    'images[' . $index . ']',
+                    file_get_contents($file->path()),
+                    $file->getClientOriginalName()
+                );
+            }
+
+            // Send request
+            $response = $http->post($this->baseUrl . '/upload-gallery-images', [
+                'year' => $year,
+                'area' => $area,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                Log::info('Gallery images uploaded successfully', [
+                    'uploaded_count' => $data['uploaded_count'] ?? 0,
+                ]);
+                return $data['files'] ?? null;
+            }
+
+            Log::error('Gallery images upload failed', [
+                'status' => $response->status(),
+                'response' => $response->body(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Gallery images upload error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Upload single gallery image
+     */
+    public function uploadGalleryImage($file, int $year, string $area): ?string
+    {
+        try {
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'X-API-Key' => $this->apiKey,
+                    'Accept' => 'application/json',
+                ])
+                ->attach(
+                    'file',
+                    file_get_contents($file->path()),
+                    $file->getClientOriginalName()
+                )
+                ->post($this->baseUrl . '/upload-gallery-image', [
+                    'year' => $year,
+                    'area' => $area,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['path'] ?? null;
+            }
+
+            Log::error('Gallery image upload failed', [
+                'status' => $response->status(),
+                'response' => $response->body(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Gallery image upload error: ' . $e->getMessage());
+            return null;
         }
     }
 }
