@@ -80,6 +80,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/post-items/{id}', [PostItemController::class, 'destroy'])->name('post-items.destroy');
 
     // ============================================
+    // announcement ROUTES (CRUD)
+    // ============================================
+    Route::get('/announcement', function () {
+        return view('pages.announcement.announcement', ['title' => 'Announcements']);
+    })->name('announcement');
+
+
+    // ============================================
     // GALLERY ROUTES (CRUD)
     // ============================================
     Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store');

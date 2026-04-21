@@ -36,6 +36,11 @@ class MenuHelper
                 'icon' => 'tables',
                 'path' => '/puf',
             ],
+            [
+                'name' => 'Announcements',
+                'icon' => 'tables',
+                'path' => '/announcements',
+            ],
             // [
             //     'name' => 'Pages',
             //     'icon' => 'pages',
