@@ -39,7 +39,7 @@ class MenuHelper
             [
                 'name' => 'Announcements',
                 'icon' => 'tables',
-                'path' => '/announcements',
+                'path' => '/announcement',
             ],
             // [
             //     'name' => 'Pages',

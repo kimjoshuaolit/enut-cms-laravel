@@ -7,6 +7,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ProfileController;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -79,13 +80,19 @@ Route::middleware('auth')->group(function () {
     Route::put('/post-items/{id}', [PostItemController::class, 'update'])->name('post-items.update');
     Route::delete('/post-items/{id}', [PostItemController::class, 'destroy'])->name('post-items.destroy');
 
-    // ============================================
-    // announcement ROUTES (CRUD)
-    // ============================================
+    // Announcement ROUTES (CRUD)
     Route::get('/announcement', function () {
-        return view('pages.announcement.announcement', ['title' => 'Announcements']);
+        $announcements = \App\Models\Announcement::orderBy('ann_date', 'desc')->get();
+        return view('pages.announcement.announcement', [
+            'title' => 'Announcement',
+            'announcements' => $announcements
+        ]);
     })->name('announcement');
 
+    Route::post('/announcement', [AnnouncementController::class, 'store'])->name('announcement.store');
+    Route::get('/announcement/{id}/edit', [AnnouncementController::class, 'edit'])->name('announcement.edit');
+    Route::put('/announcement/{id}', [AnnouncementController::class, 'update'])->name('announcement.update');
+    Route::delete('/announcement/{id}', [AnnouncementController::class, 'destroy'])->name('announcement.destroy');
 
     // ============================================
     // GALLERY ROUTES (CRUD)
