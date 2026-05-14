@@ -35,9 +35,13 @@ return [
         ],
     ],
     'legacy_api' => [
-        'base_url' => env('LEGACY_API_URL', 'http://localhost:8000/api'),
+        #'base_url' => env('LEGACY_API_URL', 'http://localhost:8000/api'),
+	'base_url' => env('ENUTV2_BASE_URL', 'http://10.18.11.39:8002'),
         'api_key' => env('LEGACY_API_KEY', ''),
     ],
 
+'enutv2' => [
+    'base_url' => env('ENUTV2_BASE_URL', 'http://10.18.11.39:8002'),
+],
 
 ];

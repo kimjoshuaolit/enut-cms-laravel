@@ -32,74 +32,43 @@ class LegacyFileService
      * @return string|null Returns the file path on success, null on failure
      */
     public function uploadImage(UploadedFile $file, string $category): ?string
-    {
-        try {
+{
+    try {
+        Log::info('Attempting to upload image to enutV2', [
+            'file' => $file->getClientOriginalName(),
+            'category' => $category,
+            'api_url' => $this->baseUrl . '/upload-image',
+        ]);
 
-            // Debug: Log what we're trying to do
-            Log::info('Attempting to upload image to enutV2', [
-                'file' => $file->getClientOriginalName(),
+        $response = Http::timeout(30)
+            ->withHeaders([
+                'X-API-Key' => $this->apiKey,
+            ])
+            ->attach(
+                'file',
+                file_get_contents($file->path()),
+                $file->getClientOriginalName()
+            )
+            ->post($this->baseUrl . '/upload-image', [
                 'category' => $category,
-                'api_url' => $this->baseUrl . '/upload-image',
-            ]);
-            // Send POST request to enutV2 API with the file
-            $response = Http::attach(
-                'file',                              // Field name
-                file_get_contents($file->path()),    // File contents
-                $file->getClientOriginalName()       // Original filename
-            )->post($this->baseUrl . '/upload-image', [
-                'category' => $category,
             ]);
 
-            // Check if upload was successful
-            if ($response->successful()) {
-                $data = $response->json();
-                return $data['path'] ?? null;
-            }
-
-            // Log error if upload failed
-            Log::error('Image upload to enutV2 failed', [
-                'status' => $response->status(),
-                'response' => $response->body(),
-            ]);
-
-            return null;
-        } catch (\Exception $e) {
-            // Log any exceptions
-            Log::error('Image upload to enutV2 error: ' . $e->getMessage());
-            return null;
+        if ($response->successful()) {
+            $data = $response->json();
+            return $data['path'] ?? null;
         }
 
-        // try {
-        //     $response = Http::timeout(30)
-        //         ->withHeaders([
-        //             'X-API-Key' => $this->apiKey,  // ← Add API key
-        //         ])
-        //         ->attach(
-        //             'file',
-        //             file_get_contents($file->path()),
-        //             $file->getClientOriginalName()
-        //         )
-        //         ->post($this->baseUrl . '/upload-image', [
-        //             'category' => $category,
-        //         ]);
+        Log::error('Image upload to enutV2 failed', [
+            'status' => $response->status(),
+            'response' => $response->body(),
+        ]);
 
-        //     if ($response->successful()) {
-        //         $data = $response->json();
-        //         return $data['path'] ?? null;
-        //     }
-
-        //     Log::error('Image upload failed', [
-        //         'status' => $response->status(),
-        //         'response' => $response->body(),
-        //     ]);
-
-        //     return null;
-        // } catch (\Exception $e) {
-        //     Log::error('Image upload error: ' . $e->getMessage());
-        //     return null;
-        // }
+        return null;
+    } catch (\Exception $e) {
+        Log::error('Image upload to enutV2 error: ' . $e->getMessage());
+        return null;
     }
-
+}
     /**
      * Upload PDF to legacy enutV2 system
      *
@@ -108,37 +77,37 @@ class LegacyFileService
      * @return string|null Returns the file path on success, null on failure
      */
     public function uploadPdf(UploadedFile $file, string $category): ?string
-    {
-        try {
-            // Send POST request to enutV2 API with the file
-            $response = Http::attach(
+{
+    try {
+        $response = Http::timeout(30)
+            ->withHeaders([
+                'X-API-Key' => $this->apiKey,
+            ])
+            ->attach(
                 'file',
                 file_get_contents($file->path()),
                 $file->getClientOriginalName()
-            )->post($this->baseUrl . '/upload-pdf', [
+            )
+            ->post($this->baseUrl . '/upload-pdf', [
                 'category' => $category,
             ]);
 
-            // Check if upload was successful
-            if ($response->successful()) {
-                $data = $response->json();
-                return $data['path'] ?? null;
-            }
-
-            // Log error if upload failed
-            Log::error('PDF upload to enutV2 failed', [
-                'status' => $response->status(),
-                'response' => $response->body(),
-            ]);
-
-            return null;
-        } catch (\Exception $e) {
-            // Log any exceptions
-            Log::error('PDF upload to enutV2 error: ' . $e->getMessage());
-            return null;
+        if ($response->successful()) {
+            $data = $response->json();
+            return $data['path'] ?? null;
         }
-    }
 
+        Log::error('PDF upload to enutV2 failed', [
+            'status' => $response->status(),
+            'response' => $response->body(),
+        ]);
+
+        return null;
+    } catch (\Exception $e) {
+        Log::error('PDF upload to enutV2 error: ' . $e->getMessage());
+        return null;
+    }
+}
     /**
      * Delete file from legacy enutV2 system
      *

@@ -135,7 +135,7 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Current Image
                                 </label>
-                                <img :src="`{{ url('/') }}/enutV2/${formData.current_pic_file.replace('storage/', 'storage/app/public/')}`"
+                                <img :src="`{{ config('services.enutv2.base_url') }}/${formData.current_pic_file}`"
                                     class="mt-1 h-32 w-32 object-cover rounded-lg border-2 border-gray-300">
                             </div>
 

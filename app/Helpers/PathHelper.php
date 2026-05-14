@@ -14,9 +14,12 @@ if (!function_exists('old_storage_path')) {
         }
 
         // Replace 'storage/' with 'enutV2/'
-        $newPath = str_replace('storage/', 'enutV2/storage/app/public/', $path);
+	// local
+        // $newPath = str_replace('storage/', 'enutV2/storage/app/public/', $path);
+       	// return asset($newPath);
 
-        return asset($newPath);
+	$baseUrl = config('services.enutv2.base_url', 'http://10.18.11.39:8002');
+	return $baseUrl . '/' . $path;
     }
 
     function old_pdf_path(?string $path): string
@@ -26,8 +29,11 @@ if (!function_exists('old_storage_path')) {
         }
 
         // Replace 'storage/' with 'enutV2/'
-        $newPath = str_replace('storage/', 'enutV2/storage/app/public/', $path);
+	//local
+        // $newPath = str_replace('storage/', 'enutV2/storage/app/public/', $path);
+        // return asset($newPath);
 
-        return asset($newPath);
+	$baseUrl = config('services.enutv2.base_url', 'http://10.18.11.39:8002');
+        return $baseUrl . '/' . $path;
     }
 }
