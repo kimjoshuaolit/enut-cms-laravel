@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\ecommerce;
+namespace App\View\Components\enutrition;
 
 use Closure;
 use Illuminate\Contracts\View\View;
