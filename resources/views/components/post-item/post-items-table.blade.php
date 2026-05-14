@@ -28,7 +28,7 @@
 
         @if ($postItems->count() > 0)
             <div class="max-w-full overflow-x-auto custom-scrollbar">
-                <table class="w-full min-w-[1102px]">
+                <table class="w-full min-w-[1250px]">
                     {{-- Table head and body remain the same --}}
                     <thead>
                         <tr class="border-b border-gray-100 dark:border-gray-800">
@@ -45,6 +45,11 @@
                             <th class="px-5 py-3 text-left sm:px-6">
                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
                                     Year
+                                </p>
+                            </th>
+                            <th class="px-5 py-3 text-left sm:px-6">
+                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                    Region
                                 </p>
                             </th>
                             <th class="px-5 py-3 text-left sm:px-6">
@@ -97,7 +102,26 @@
                                         {{ $item->post_year }}
                                     </p>
                                 </td>
-
+                                {{-- Region --}}
+                                <td class="px-5 py-4 sm:px-6">
+                                    @if ($item->island_group || $item->region)
+                                        <div class="space-y-1">
+                                            @if ($item->island_group)
+                                                <span
+                                                    class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-500/15 dark:text-blue-400">
+                                                    {{ $item->island_group }}
+                                                </span>
+                                            @endif
+                                            @if ($item->region)
+                                                <span class="block text-xs text-gray-500 dark:text-gray-400">
+                                                    {{ $item->region }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400 text-theme-xs dark:text-gray-500">—</span>
+                                    @endif
+                                </td>
                                 {{-- Image --}}
                                 <td class="px-5 py-4 sm:px-6">
                                     @if ($item->pic_file && $item->pic_file != 'NA' && $item->pic_file != 'N/A' && $item->pic_file != 'na')

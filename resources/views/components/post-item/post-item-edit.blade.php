@@ -1,14 +1,20 @@
 <div x-data="{
     isOpen: false,
     itemId: null,
+    regions: {{ json_encode(config('regions')) }},
     formData: {
         post_title: '',
         post_description: '',
         post_survey: '',
         post_year: '',
         post_cat: '{{ $category }}',
+        island_group: '',
+        region: '',
         current_pic_file: '',
         current_pdf_path: ''
+    },
+    get filteredRegions() {
+        return this.formData.island_group ? this.regions[this.formData.island_group] : {};
     },
 
     async openEdit(id) {
@@ -21,6 +27,8 @@
             this.formData.post_description = data.post_description || '';
             this.formData.post_survey = data.post_survey || '';
             this.formData.post_year = data.post_year || '';
+            this.formData.island_group = data.island_group || '';
+            this.formData.region = data.region || '';
             this.formData.current_pic_file = data.pic_file || '';
             this.formData.current_pdf_path = data.pdf_path || '';
             this.isOpen = true;
@@ -130,6 +138,37 @@
                                 </div>
                             </div>
 
+                            {{-- Island Group & Region --}}
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Island Group
+                                    </label>
+                                    <select name="island_group" x-model="formData.island_group"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm">
+                                        <option value="">Select Island Group</option>
+                                        <option value="Luzon">Luzon</option>
+                                        <option value="Visayas">Visayas</option>
+                                        <option value="Mindanao">Mindanao</option>
+                                        <option value="National">National</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Region
+                                    </label>
+                                    <select name="region" x-model="formData.region"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm">
+                                        <option value="">Select Region</option>
+                                        <template x-for="(regionName, regionCode) in filteredRegions"
+                                            :key="regionCode">
+                                            <option :value="regionCode" :selected="regionCode === formData.region"
+                                                x-text="regionName"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
                             {{-- Current Image --}}
                             <div x-show="formData.current_pic_file && formData.current_pic_file !== 'NA'">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">

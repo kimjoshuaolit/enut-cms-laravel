@@ -25,6 +25,8 @@ class PostItemsTable extends Component
             'post_description',
             'post_survey',
             'post_year',
+            'region',
+            'island_group',
             'pic_file',
             'pdf_path',
             'created_at'

@@ -25,6 +25,8 @@ class PostItemController extends Controller
             'post_survey' => 'nullable|string|max:255',
             'post_year' => 'required|integer|min:1900|max:2100',
             'post_cat' => 'required|string',
+            'island_group' => 'nullable|in:Luzon,Visayas,Mindanao,National',
+            'region' => 'nullable|string|max:50',
             'pic_file' => 'nullable|image|max:5120', // 5MB max
             'pdf_path' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
         ], [
@@ -49,6 +51,8 @@ class PostItemController extends Controller
                 'post_year' => $validated['post_year'],
                 'post_cat' => $validated['post_cat'],
                 'status' => '1',
+                'island_group' => $validated['island_group'] ?? null,
+                'region' => $validated['region'] ?? null,
                 'pic_file' => '',
                 'pdf_path' => null,
             ];
@@ -114,6 +118,8 @@ class PostItemController extends Controller
             'post_survey' => 'nullable|string|max:255',
             'post_year' => 'required|integer|min:1900|max:2100',
             'post_cat' => 'required|string',
+            'island_group' => 'nullable|in:Luzon,Visayas,Mindanao,National',
+            'region' => 'nullable|string|max:50',
             'pic_file' => 'nullable|image|max:5120',
             'pdf_path' => 'nullable|file|mimes:pdf|max:10240',
         ], [
@@ -135,6 +141,8 @@ class PostItemController extends Controller
                 'post_survey' => $validated['post_survey'] ?? '',
                 'post_year' => $validated['post_year'],
                 'post_cat' => $validated['post_cat'],
+                'island_group' => $validated['island_group'] ?? null,
+                'region' => $validated['region'] ?? null,
             ];
 
 

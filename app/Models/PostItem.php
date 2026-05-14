@@ -21,6 +21,8 @@ class PostItem extends Model
         'post_type',
         'post_survey',
         'post_year',
+        'island_group',
+        'region',
         'pic_file',
         'pdf_path',
         'date_pub',

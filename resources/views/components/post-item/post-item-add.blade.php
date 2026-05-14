@@ -144,6 +144,58 @@
                                 </div>
                             </div>
 
+                            {{-- Island Group & Region --}}
+                            <div x-data="{
+                                selectedIslandGroup: '{{ old('island_group') }}',
+                                regions: {{ json_encode(config('regions')) }},
+                                get filteredRegions() {
+                                    return this.selectedIslandGroup ? this.regions[this.selectedIslandGroup] : {};
+                                }
+                            }" class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Island Group
+                                    </label>
+                                    <select name="island_group" x-model="selectedIslandGroup"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm">
+                                        <option value="">Select Island Group</option>
+                                        <option value="Luzon" {{ old('island_group') == 'Luzon' ? 'selected' : '' }}>
+                                            Luzon</option>
+                                        <option value="Visayas"
+                                            {{ old('island_group') == 'Visayas' ? 'selected' : '' }}>Visayas</option>
+                                        <option value="Mindanao"
+                                            {{ old('island_group') == 'Mindanao' ? 'selected' : '' }}>Mindanao</option>
+                                        <option value="National"
+                                            {{ old('island_group') == 'National' ? 'selected' : '' }}>National</option>
+                                    </select>
+                                    @error('island_group')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Region
+                                    </label>
+                                    <select name="region"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm">
+                                        <option value="">Select Region</option>
+                                        <template x-if="selectedIslandGroup">
+                                            <template x-for="(regionName, regionCode) in filteredRegions"
+                                                :key="regionCode">
+                                                <option :value="regionCode"
+                                                    :selected="regionCode === '{{ old('region') }}'">
+                                                    <span x-text="regionName"></span>
+                                                </option>
+                                            </template>
+                                        </template>
+                                    </select>
+                                    @error('region')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
                             {{-- Image Upload --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
