@@ -32,43 +32,43 @@ class LegacyFileService
      * @return string|null Returns the file path on success, null on failure
      */
     public function uploadImage(UploadedFile $file, string $category): ?string
-{
-    try {
-        Log::info('Attempting to upload image to enutV2', [
-            'file' => $file->getClientOriginalName(),
-            'category' => $category,
-            'api_url' => $this->baseUrl . '/upload-image',
-        ]);
-
-        $response = Http::timeout(30)
-            ->withHeaders([
-                'X-API-Key' => $this->apiKey,
-            ])
-            ->attach(
-                'file',
-                file_get_contents($file->path()),
-                $file->getClientOriginalName()
-            )
-            ->post($this->baseUrl . '/upload-image', [
+    {
+        try {
+            Log::info('Attempting to upload image to enutV2', [
+                'file' => $file->getClientOriginalName(),
                 'category' => $category,
+                'api_url' => $this->baseUrl . '/upload-image',
             ]);
 
-        if ($response->successful()) {
-            $data = $response->json();
-            return $data['path'] ?? null;
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'X-API-Key' => $this->apiKey,
+                ])
+                ->attach(
+                    'file',
+                    file_get_contents($file->path()),
+                    $file->getClientOriginalName()
+                )
+                ->post($this->baseUrl . '/upload-image', [
+                    'category' => $category,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['path'] ?? null;
+            }
+
+            Log::error('Image upload to enutV2 failed', [
+                'status' => $response->status(),
+                'response' => $response->body(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Image upload to enutV2 error: ' . $e->getMessage());
+            return null;
         }
-
-        Log::error('Image upload to enutV2 failed', [
-            'status' => $response->status(),
-            'response' => $response->body(),
-        ]);
-
-        return null;
-    } catch (\Exception $e) {
-        Log::error('Image upload to enutV2 error: ' . $e->getMessage());
-        return null;
     }
-}
     /**
      * Upload PDF to legacy enutV2 system
      *
@@ -77,37 +77,37 @@ class LegacyFileService
      * @return string|null Returns the file path on success, null on failure
      */
     public function uploadPdf(UploadedFile $file, string $category): ?string
-{
-    try {
-        $response = Http::timeout(30)
-            ->withHeaders([
-                'X-API-Key' => $this->apiKey,
-            ])
-            ->attach(
-                'file',
-                file_get_contents($file->path()),
-                $file->getClientOriginalName()
-            )
-            ->post($this->baseUrl . '/upload-pdf', [
-                'category' => $category,
+    {
+        try {
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'X-API-Key' => $this->apiKey,
+                ])
+                ->attach(
+                    'file',
+                    file_get_contents($file->path()),
+                    $file->getClientOriginalName()
+                )
+                ->post($this->baseUrl . '/upload-pdf', [
+                    'category' => $category,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['path'] ?? null;
+            }
+
+            Log::error('PDF upload to enutV2 failed', [
+                'status' => $response->status(),
+                'response' => $response->body(),
             ]);
 
-        if ($response->successful()) {
-            $data = $response->json();
-            return $data['path'] ?? null;
+            return null;
+        } catch (\Exception $e) {
+            Log::error('PDF upload to enutV2 error: ' . $e->getMessage());
+            return null;
         }
-
-        Log::error('PDF upload to enutV2 failed', [
-            'status' => $response->status(),
-            'response' => $response->body(),
-        ]);
-
-        return null;
-    } catch (\Exception $e) {
-        Log::error('PDF upload to enutV2 error: ' . $e->getMessage());
-        return null;
     }
-}
     /**
      * Delete file from legacy enutV2 system
      *
@@ -216,6 +216,47 @@ class LegacyFileService
             return null;
         } catch (\Exception $e) {
             Log::error('Gallery image upload error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Upload PUF zip/rar file to legacy enutV2 system
+     */
+    public function uploadPuf($file, string $name, string $year, string $subCategory): ?string
+    {
+        try {
+            $extension = $file->getClientOriginalExtension();
+            $fileName = $name . '.' . $extension;
+
+            $response = Http::timeout(60)
+                ->withHeaders([
+                    'X-API-Key' => $this->apiKey,
+                ])
+                ->attach(
+                    'file',
+                    file_get_contents($file->path()),
+                    $fileName
+                )
+                ->post($this->baseUrl . '/upload-puf', [
+                    'name'         => $name,
+                    'year'         => $year,
+                    'sub_category' => $subCategory,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['path'] ?? null;
+            }
+
+            Log::error('PUF upload failed', [
+                'status'   => $response->status(),
+                'response' => $response->body(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('PUF upload error: ' . $e->getMessage());
             return null;
         }
     }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PufController;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 // ============================================
@@ -102,6 +103,49 @@ Route::middleware('auth')->group(function () {
     Route::put('/gallery/{id}', [GalleryController::class, 'update'])->name('gallery.update');
     Route::post('/gallery/update-order', [GalleryController::class, 'updateOrder'])->name('gallery.update-order');
     Route::delete('/gallery/{id}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
+
+    // ============================================
+    // PUF UPLOAD (CRUD)
+    // ============================================
+    Route::get('/puf', function () {
+        $postItems = \App\Models\PostItem::where('post_cat', 'PUF')
+            ->select(
+                'id',
+                'post_title',
+                'post_description',
+                'post_type',
+                'post_survey',
+                'post_year',
+                'date_pub',
+                'pic_file',
+                'pdf_path'
+            )
+            ->orderBy('post_year', 'desc')
+            ->paginate(15);
+
+        $surveys = \App\Models\PostItemsCat::where('cat_name', 'PUF')
+            ->orderBy('value', 'desc')
+            ->get();
+
+        // Get puf_csv entries keyed by post_item_id
+
+        $pufFiles = \Illuminate\Support\Facades\DB::table('puf_csv')
+            ->whereIn('post_item_id', $postItems->pluck('id'))
+            ->get()
+            ->keyBy('post_item_id');
+
+        return view('pages.puf.puf', [
+            'title'     => 'PUF',
+            'postItems' => $postItems,
+            'surveys'   => $surveys,
+            'pufFiles'  => $pufFiles,
+        ]);
+    })->name('puf')->middleware('auth');
+
+    Route::post('/puf', [PufController::class, 'store'])->name('puf.store')->middleware('auth');
+    Route::get('/puf/{id}/edit', [PufController::class, 'edit'])->name('puf.edit');
+    Route::put('/puf/{id}', [PufController::class, 'update'])->name('puf.update')->middleware('auth');
+    Route::delete('/puf/{id}', [PufController::class, 'destroy'])->name('puf.destroy')->middleware('auth');
 
     // ============================================
     // OTHER PAGES
