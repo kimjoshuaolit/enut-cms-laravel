@@ -5,9 +5,9 @@
             Downloads
         </h3>
 
-        <!-- Dropdown Menu -->
+        {{-- <!-- Dropdown Menu -->
         <x-common.dropdown-menu />
-        <!-- End Dropdown Menu -->
+        <!-- End Dropdown Menu --> --}}
     </div>
 
     <div class="max-w-full overflow-x-auto custom-scrollbar">

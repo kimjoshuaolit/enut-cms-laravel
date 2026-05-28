@@ -4,7 +4,9 @@
     <div class="grid grid-cols-12 gap-4 md:gap-6">
         <div class="col-span-12 space-y-6 xl:col-span-12">
             <x-enutrition.enutrition-metrics />
-            <x-enutrition.monthly-sale />
+            {{-- <x-enutrition.monthly-sale /> --}}
+            <x-enutrition.feedback-charts :feedbackCount="$feedbackCount" :ratingsData="$ratingsData" :affiliationData="$affiliationData" :purposeData="$purposeData"
+                :npsData="$npsData" :npsScore="$npsScore" :responsesOverTime="$responsesOverTime" />
         </div>
 
 
@@ -14,6 +16,7 @@
             {{-- <x-enutrition.statistics-chart /> --}}
 
             {{-- <x-enutrition.recent-orders /> --}}
+
         </div>
 
         {{-- s --}}

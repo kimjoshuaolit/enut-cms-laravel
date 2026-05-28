@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
+
 use App\Http\Controllers\PostItemController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\SearchController;
@@ -36,7 +36,86 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard (Home)
     Route::get('/', function () {
-        return view('pages.dashboard.enut-cms', ['title' => 'eNutrition CMS Dashboard']);
+        // Existing metrics
+        $totalRows = \Illuminate\Support\Facades\DB::table('puf_csv_logs')->count();
+        $totalVisits = \Illuminate\Support\Facades\DB::table('puf_csv_logs')
+            ->whereNotNull('csf_data')
+            ->count();
+        $currentDate = now()->format('M d, Y');
+
+        // Feedback data from csf_data JSON
+        $feedbackLogs = \Illuminate\Support\Facades\DB::table('puf_csv_logs')
+            ->whereNotNull('csf_data')
+            ->whereNotNull('downloaded_at')
+            ->orderBy('downloaded_at', 'desc')
+            ->get()
+            ->map(function ($log) {
+                $log->csf_data = json_decode($log->csf_data, true);
+                return $log;
+            });
+
+        // Ratings averages
+        $ratingKeys = ['responsiveness', 'reliability', 'access', 'communication', 'costs', 'integrity', 'assurance', 'outcome', 'overall'];
+        $ratingsData = [];
+        foreach ($ratingKeys as $key) {
+            $values = $feedbackLogs
+                ->filter(fn($l) => isset($l->csf_data['ratings'][$key]) && $l->csf_data['ratings'][$key] !== 'NA')
+                ->map(fn($l) => (float) $l->csf_data['ratings'][$key]);
+            $ratingsData[$key] = $values->count() > 0 ? round($values->avg(), 2) : 0;
+        }
+
+        // Affiliation counts
+        $affiliationData = $feedbackLogs
+            ->filter(fn($l) => !empty($l->csf_data['affiliation']))
+            ->groupBy(fn($l) => $l->csf_data['affiliation'])
+            ->map->count();
+
+        // Purpose counts
+        $purposeData = $feedbackLogs
+            ->flatMap(fn($l) => $l->csf_data['purpose'] ?? [])
+            ->filter()
+            ->countBy()
+            ->sortDesc()
+            ->take(8);
+
+        // NPS
+        $npsData = ['promoters' => 0, 'passives' => 0, 'detractors' => 0];
+        foreach ($feedbackLogs as $log) {
+            $nps = $log->csf_data['nps'] ?? null;
+            if ($nps === null) continue;
+            $nps = (int) $nps;
+            if ($nps >= 9) $npsData['promoters']++;
+            elseif ($nps >= 7) $npsData['passives']++;
+            else $npsData['detractors']++;
+        }
+        $npsTotal = array_sum($npsData);
+        $npsScore = $npsTotal > 0
+            ? round((($npsData['promoters'] - $npsData['detractors']) / $npsTotal) * 100)
+            : 0;
+
+        // Responses over time (last 30 days)
+        $responsesOverTime = \Illuminate\Support\Facades\DB::table('puf_csv_logs')
+            ->whereNotNull('csf_data')
+            ->whereNotNull('downloaded_at')
+            ->where('downloaded_at', '>=', now()->subDays(30))
+            ->selectRaw('DATE(downloaded_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        return view('pages.dashboard.enut-cms', [
+            'title'             => 'eNutrition CMS Dashboard',
+            'totalRows'         => $totalRows,
+            'totalVisits'       => $totalVisits,
+            'currentDate'       => $currentDate,
+            'ratingsData'       => $ratingsData,
+            'affiliationData'   => $affiliationData,
+            'purposeData'       => $purposeData,
+            'npsData'           => $npsData,
+            'npsScore'          => $npsScore,
+            'responsesOverTime' => $responsesOverTime,
+            'feedbackCount'     => $feedbackLogs->count(),
+        ]);
     })->name('dashboard');
 
     // Search Routes
