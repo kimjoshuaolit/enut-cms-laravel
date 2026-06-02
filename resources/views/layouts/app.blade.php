@@ -11,6 +11,8 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Quill CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <!-- Alpine.js -->
     {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
@@ -157,33 +159,10 @@ window.addEventListener('resize', checkMobile);">
             }
         });
     </script>
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded');
-            console.log('Hash:', window.location.hash);
 
-            if (window.location.hash) {
-                const targetId = window.location.hash.substring(1);
-                console.log('Looking for element:', targetId);
-                const targetElement = document.getElementById(targetId);
-                console.log('Found element:', targetElement);
 
-                if (targetElement) {
-                    setTimeout(() => {
-                        console.log('Scrolling and highlighting...');
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                        targetElement.classList.add('highlight-row');
-                        setTimeout(() => {
-                            targetElement.classList.remove('highlight-row');
-                        }, 3000);
-                    }, 500);
-                }
-            }
-        });
-    </script> --}}
+    {{-- Quill JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 </body>
 
 @stack('scripts')

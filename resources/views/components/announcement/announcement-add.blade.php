@@ -120,11 +120,17 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Article <span class="text-red-500">*</span>
                             </label>
-                            <textarea name="ann_article" rows="5" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm @error('ann_article') border-red-500 @enderror"
-                                placeholder="Enter announcement content">{{ old('ann_article') }}</textarea>
+                            {{-- Hidden input that stores the HTML content --}}
+                            <input type="hidden" name="ann_article" id="ann_article_input">
+
+                            {{-- Quill Editor Container --}}
+                            <div id="ann_article_editor"
+                                class="mt-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                                style="min-height: 200px;">
+                                {!! old('ann_article') !!}
+                            </div>
                             @error('ann_article')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -160,3 +166,50 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Quill for Add form
+            const addQuill = new Quill('#ann_article_editor', {
+                theme: 'snow',
+                placeholder: 'Enter announcement content...',
+                modules: {
+                    toolbar: [
+                        [{
+                            'header': [1, 2, 3, false]
+                        }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{
+                            'color': []
+                        }, {
+                            'background': []
+                        }],
+                        [{
+                            'list': 'ordered'
+                        }, {
+                            'list': 'bullet'
+                        }],
+                        [{
+                            'align': []
+                        }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Sync Quill content to hidden input on form submit
+            const addForm = document.querySelector('form[action="{{ route('announcement.store') }}"]');
+            if (addForm) {
+                addForm.addEventListener('submit', function() {
+                    document.getElementById('ann_article_input').value = addQuill.root.innerHTML;
+                });
+            }
+
+            // Restore old value if validation failed
+            @if (old('ann_article'))
+                addQuill.root.innerHTML = `{!! addslashes(old('ann_article')) !!}`;
+            @endif
+        });
+    </script>
+@endpush

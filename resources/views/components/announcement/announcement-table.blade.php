@@ -44,7 +44,7 @@
                                 {{ $announcement->ann_title }}
                             </p>
                             <p class="text-xs text-gray-500 mt-1 line-clamp-2 max-w-xs">
-                                {{ Str::limit($announcement->ann_article, 80) }}
+                                {{ Str::limit(strip_tags($announcement->ann_article), 80) }}
                             </p>
                         </td>
 

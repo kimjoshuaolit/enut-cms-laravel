@@ -21,6 +21,14 @@
             this.formData.ann_article = data.ann_article || '';
             this.formData.current_ann_media = data.ann_media || '';
             this.isOpen = true;
+
+            // Dispatch event to set Quill content after modal opens
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('set-announcement-article', {
+                    detail: { content: data.ann_article || '' }
+                }));
+            }, 50);
+
         } catch (error) {
             console.error('Error loading announcement:', error);
             alert('Failed to load announcement data');
@@ -115,9 +123,10 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Article <span class="text-red-500">*</span>
                                 </label>
-                                <textarea name="ann_article" x-model="formData.ann_article" rows="5" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lime-500 focus:ring-lime-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
-                                    placeholder="Enter announcement content"></textarea>
+                                <input type="hidden" name="ann_article" id="edit_ann_article_input">
+                                <div id="edit_ann_article_editor"
+                                    class="mt-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                                    style="min-height: 200px;"></div>
                             </div>
 
                             {{-- Current Image --}}
@@ -162,3 +171,49 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editQuill = new Quill('#edit_ann_article_editor', {
+                theme: 'snow',
+                placeholder: 'Enter announcement content...',
+                modules: {
+                    toolbar: [
+                        [{
+                            'header': [1, 2, 3, false]
+                        }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{
+                            'color': []
+                        }, {
+                            'background': []
+                        }],
+                        [{
+                            'list': 'ordered'
+                        }, {
+                            'list': 'bullet'
+                        }],
+                        [{
+                            'align': []
+                        }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Listen for content to be set from Alpine openEdit()
+            window.addEventListener('set-announcement-article', function(e) {
+                editQuill.root.innerHTML = e.detail.content || '';
+            });
+
+            // Sync to hidden input on submit
+            document.addEventListener('submit', function() {
+                const input = document.getElementById('edit_ann_article_input');
+                if (input) {
+                    input.value = editQuill.root.innerHTML;
+                }
+            });
+        });
+    </script>
+@endpush
