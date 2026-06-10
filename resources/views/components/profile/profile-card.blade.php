@@ -9,17 +9,17 @@
 
                 {{-- User Info --}}
                 <div class="order-3 xl:order-2">
-                    <h4 class="mb-2 text-center text-lg font-semibold text-gray-800 xl:text-left dark:text-white/90">
+                    {{-- <h4 class="mb-2 text-center text-lg font-semibold text-gray-800 xl:text-left dark:text-white/90">
                         {{ $user->name }}
-                    </h4>
+                    </h4> --}}
                     <div class="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                        {{-- <p class="text-sm text-gray-500 dark:text-gray-400">
                             Admin
-                        </p>
-                        <div class="hidden h-3.5 w-px bg-gray-300 xl:block dark:bg-gray-700"></div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                        </p> --}}
+                        {{-- <div class="hidden h-3.5 w-px bg-gray-300 xl:block dark:bg-gray-700"></div> --}}
+                        {{-- <p class="text-sm text-gray-500 dark:text-gray-400">
                             {{ $user->email }}
-                        </p>
+                        </p> --}}
                     </div>
                 </div>
 
