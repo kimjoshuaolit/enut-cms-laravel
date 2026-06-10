@@ -51,21 +51,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="group relative">
-                                    <button type="button" disabled
-                                        class="inline-flex w-full items-center justify-center gap-3 rounded-lg bg-gray-100 px-7 py-3 text-sm font-normal text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-white/50">
-                                        <svg width="21" class="fill-current" height="20" viewBox="0 0 21 20"
-                                            fill="none">
-                                            <path
-                                                d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z" />
-                                        </svg>
-                                        Sign in with X
-                                    </button>
-                                    <div class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-gray-800 px-3 py-1.5 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 dark:bg-gray-700">
-                                        X sign-in is not yet available
-                                        <div class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-800 dark:border-t-gray-700"></div>
-                                    </div>
-                                </div>
+
                             </div>
 
                             <div class="relative py-3 sm:py-5">
@@ -122,11 +108,16 @@
                                             </span>
                                         </div>
                                         @if ($errors->any())
-                                            <div class="mt-3 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 dark:border-red-800/40 dark:bg-red-900/20">
-                                                <svg class="mt-0.5 shrink-0 text-red-500 dark:text-red-400" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 1.5a6.5 6.5 0 1 0 0 13A6.5 6.5 0 0 0 8 1.5ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-3.25a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4.75Zm0 6.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" fill="currentColor"/>
+                                            <div
+                                                class="mt-3 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 dark:border-red-800/40 dark:bg-red-900/20">
+                                                <svg class="mt-0.5 shrink-0 text-red-500 dark:text-red-400" width="16"
+                                                    height="16" viewBox="0 0 16 16" fill="none">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M8 1.5a6.5 6.5 0 1 0 0 13A6.5 6.5 0 0 0 8 1.5ZM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-3.25a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4.75Zm0 6.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                                                        fill="currentColor" />
                                                 </svg>
-                                                <p class="text-sm text-red-700 dark:text-red-400">Invalid email or password</p>
+                                                <p class="text-sm text-red-700 dark:text-red-400"> Invalid email or password
+                                                </p>
                                             </div>
                                         @endif
                                     </div>
